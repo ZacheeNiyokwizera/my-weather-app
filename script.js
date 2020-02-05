@@ -1,83 +1,101 @@
-let appId = '0f94af7cedc0069968b5892d9d0c8b55';
-let units = 'metric'; // other option is metric
+const appId = "0f94af7cedc0069968b5892d9d0c8b55";
+const units = "metric"; // other option is metric
 let searchMethod; // q means searching as a string.
 
-function getSearchMethod(searchTerm) {
-    if (searchTerm.length === 5 && Number.parseInt(searchTerm) + '' === searchTerm)
-        searchMethod = 'zip';
-    else
-        searchMethod = 'q';
-}
+const getSearchMethod = searchTerm => {
+  if (
+    searchTerm.length === 5 &&
+    parseInt(searchTerm, 10).toString() === searchTerm
+  ) {
+    searchMethod = "zip";
+  } else {
+    searchMethod = "q";
+  }
+};
 
-function searchWeather(searchTerm) {
-    getSearchMethod(searchTerm);
-    fetch(`https://api.openweathermap.org/data/2.5/weather?${searchMethod}=${searchTerm}&APPID=${appId}&units=${units}`)
-        .then((result) => {
-            return result.json();
-        }).then((res) => {
-            init(res);
-        });
-}
+const searchWeather = async searchTerm => {
+  getSearchMethod(searchTerm);
+  const result = await fetch(
+    `https://api.openweathermap.org/data/2.5/weather?${searchMethod}=${searchTerm}&APPID=${appId}&units=${units}`
+  );
+  const json = result.json();
+  init(await json);
+};
 
-function init(resultFromServer) {
-    switch (resultFromServer.weather[0].main) {
-        case 'Clear':
-            document.body.style.backgroundImage = "url('clear.jpg')";
-            break;
+const init = resultFromServer => {
+  if (
+    !resultFromServer ||
+    !Array.isArray(resultFromServer.weather) ||
+    !resultFromServer.weather.length
+  ) {
+    return;
+  }
 
-        case 'Clouds':
-            document.body.style.backgroundImage = "url('cloudy.jpg')";
-            break;
+  let backgroundImageUrl = "";
+  switch (resultFromServer.weather[0].main.toLowerCase()) {
+    case "clear":
+      backgroundImageUrl = "url('clear.jpg')";
+      break;
 
-        case 'Rain':
-        case 'Drizzle':
-        case 'Mist':
-            document.body.style.backgroundImage = "url('rain.jpg')";
-            break;
+    case "clouds":
+      backgroundImageUrl = "url('cloudy.jpg')";
+      break;
 
-        case 'Thunderstorm':
-            document.body.style.backgroundImage = "url('storm.jpg')";
-            break;
+    case "rain":
+    case "drizzle":
+    case "mist":
+      backgroundImageUrl = "url('rain.jpg')";
+      break;
 
-        case 'Snow':
-            document.body.style.backgroundImage = "url('snow.jpg')";
-            break;
+    case "thunderstorm":
+      backgroundImageUrl = "url('storm.jpg')";
+      break;
 
-        default:
-            break;
-    }
+    case "snow":
+      backgroundImageUrl = "url('snow.jpg')";
+      break;
 
-    let weatherDescriptionHeader = document.getElementById('weatherDescriptionHeader');
-    let temperatureElement = document.getElementById('temperature');
-    let humidityElement = document.getElementById('humidity');
-    let windSpeedElement = document.getElementById('windSpeed');
-    let cityHeader = document.getElementById('cityHeader');
+    default:
+      break;
+  }
+  document.body.style.backgroundImage = backgroundImageUrl;
 
-    let weatherIcon = document.getElementById('documentIconImg');
-    weatherIcon.src = 'http://openweathermap.org/img/w/' + resultFromServer.weather[0].icon + '.png';
+  const weatherDescriptionHeader = document.getElementById(
+    "weatherDescriptionHeader"
+  );
+  const temperatureElement = document.getElementById("temperature");
+  const humidityElement = document.getElementById("humidity");
+  const windSpeedElement = document.getElementById("windSpeed");
+  const cityHeader = document.getElementById("cityHeader");
 
-    let resultDescription = resultFromServer.weather[0].description;
-    weatherDescriptionHeader.innerText = resultDescription.charAt(0).toUpperCase() + resultDescription.slice(1);
-    temperatureElement.innerHTML = Math.floor(resultFromServer.main.temp) + '&#176;';
-    windSpeedElement.innerHTML = 'Winds at  ' + Math.floor(resultFromServer.wind.speed) + ' m/s';
-    cityHeader.innerHTML = resultFromServer.name;
-    humidityElement.innerHTML = 'Humidity levels at ' + resultFromServer.main.humidity + '%';
+  const weatherIcon = document.getElementById("documentIconImg");
+  weatherIcon.src = `http://openweathermap.org/img/w/${resultFromServer.weather[0].icon}.png`;
 
-    setPositionForWeatherInfo();
-}
+  const resultDescription = resultFromServer.weather[0].description;
+  weatherDescriptionHeader.innerText =
+    resultDescription.charAt(0).toUpperCase() + resultDescription.slice(1);
+  temperatureElement.innerHTML =
+    Math.floor(resultFromServer.main.temp) + "&#176;";
+  windSpeedElement.innerHTML =
+    "Winds at  " + Math.floor(resultFromServer.wind.speed) + " m/s";
+  cityHeader.innerHTML = resultFromServer.name;
+  humidityElement.innerHTML =
+    "Humidity levels at " + resultFromServer.main.humidity + "%";
 
-function setPositionForWeatherInfo() {
-    let weatherContainer = document.getElementById('weatherContainer');
-    let weatherContainerHeight = weatherContainer.clientHeight;
-    let weatherContainerWidth = weatherContainer.clientWidth;
+  setPositionForWeatherInfo();
+};
 
-    weatherContainer.style.left = `calc(50% - ${weatherContainerWidth/2}px)`;
-    weatherContainer.style.top = `calc(50% - ${weatherContainerHeight/1.3}px)`;
-    weatherContainer.style.visibility = 'visible';
-}
+const setPositionForWeatherInfo = () => {
+  const weatherContainer = document.getElementById("weatherContainer");
+  const weatherContainerHeight = weatherContainer.clientHeight;
+  const weatherContainerWidth = weatherContainer.clientWidth;
 
-document.getElementById('searchBtn').addEventListener('click', () => {
-    let searchTerm = document.getElementById('searchInput').value;
-    if (searchTerm)
-        searchWeather(searchTerm);
+  weatherContainer.style.left = `calc(50% - ${weatherContainerWidth / 2}px)`;
+  weatherContainer.style.top = `calc(50% - ${weatherContainerHeight / 1.3}px)`;
+  weatherContainer.style.visibility = "visible";
+};
+
+document.getElementById("searchBtn").addEventListener("click", () => {
+  const searchTerm = document.getElementById("searchInput").value;
+  if (searchTerm) searchWeather(searchTerm);
 });
