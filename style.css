@@ -59,6 +59,9 @@ body {
          margin-top: 30px;
          margin-right: 40px;
      }
+     body {
+         width: 50px;
+     }
 }
 #weatherMain {
     display: block;
