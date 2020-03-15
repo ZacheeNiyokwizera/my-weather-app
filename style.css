@@ -51,12 +51,12 @@ body {
    .searchControl{
         align-items: center;
         margin-right: 50px;
-        margin-top: 150px;
+        margin-top: 310px;
         height: 150px;
     }
      #weatherContainer {
          align-items: center;
-         margin-top: 30px;
+         margin-top: 5px;
          margin-right: 40px;
      }
      body {
