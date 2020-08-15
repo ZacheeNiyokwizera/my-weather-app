@@ -88,16 +88,9 @@
                     margin-bottom: 20px;
                 }
                 
-                #appContainer {
-                    width: 100%;
-                }
-                
                 @media only screen and (max-width: 300px) {
                     body {
                         background-image: none;
-                    }
-                    #appContainer {
-                        width: 30%;
                     }
                     #weatherContainer {
                         width: 100px;
