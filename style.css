@@ -120,8 +120,7 @@
                     }
                     #searchContainer {
                         padding: 25px;
-                        position: relative;
-                        right: 700px;
+                        right: 550px;
                     }
                     #searchContainer input {
                         width: 100px;
